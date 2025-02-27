@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 const supabase = createClientComponentClient()
-
+export const runtime = 'edge';
 export async function GET(request: Request) {
   try {
     // Obtener los query params desde la URL
@@ -14,9 +14,7 @@ export async function GET(request: Request) {
     // Verificar que los parámetros requeridos están presentes
     if (!names || !email || !phone_number || !dealership_id ) {
       console.log('Missing required parameters - ROMPIMO TODO');
-      return NextResponse.json(
-        { message: 'Missing required parameters' },
-        { status: 400 }
+      return Response.json({ message: 'Missing required parameters' }, { status: 400 }
       );
     }
 
@@ -27,7 +25,7 @@ export async function GET(request: Request) {
       .match({ email: email, phone_number: phone_number });
 
       if(clientError || clientData.length > 0){
-        return NextResponse.json({ message: 'Client already exists' }, { status: 200 });
+        return Response.json({ message: 'Client already exists' }, { status: 400 });
       }
 
     // Inserción de datos en la tabla 'clientes' (incluyendo campos de vehículo)
@@ -46,11 +44,10 @@ export async function GET(request: Request) {
     // Manejar errores de inserción
     if (error) {
       console.error('Error inserting data:', error.message);
-      return NextResponse.json({ message: 'Failed to create customer', error
-        }, { status: 500 });
+      return Response.json({ message: 'Error inserting data' }, { status: 500 });
     }
     return NextResponse.json({ status: 200 } );
   } catch (error) {
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    return Response.json({ message: 'Error inserting data' }, { status: 500 });
   }
 }
