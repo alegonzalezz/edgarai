@@ -1,0 +1,6 @@
+{
+    "rewrites": [
+      { "source": "/api/customers/create", "destination": "/api/customers/create" }
+    ]
+  }
+  
